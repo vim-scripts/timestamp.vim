@@ -9,8 +9,8 @@ timestamp. The timestamp is computed by first doing a |token_substitution| on
 |timestamp_rep| and passing the result to |strftime()|. 
 
 The plugin tries to stay out of your way, and make the change as transparent
-as possible. Your search (and all other) history is unaltered, however you
-might find an extra mark in your jumplist.
+as possible. All your history (search, command, etc) and jumplists are
+unaltered, except the undo history (which contains an additional change).
 
 All the default variables and actions can be changed by buffer / global vim
 variables. See |timestamp_examples| for two simple examples.
@@ -62,6 +62,9 @@ problem, please report it to me. As a temporary fix, you can put the line >
 
 in your .vimrc. This however has the disadvantage of eating all the text after
 the colon in any timestamp line.
+
+NOTE: The first line (begining with "Created:") is optional.
+
 ------------------------------------------------------------------------------
 
 2. Timestamp Replacement format:			*timestamp_rep*
@@ -169,7 +172,30 @@ If this is set to to '%' all lines in the file will be searched for the regexp
 	<!-- Timestamp: Thu 26/02/2004 05:49:33 PM gautam@math:timestamp.txt -->
 ------------------------------------------------------------------------------
 
-7. Differences From Timstamp:				*timestamp_differences*
+7. Change History					*timestamp_history*
+
+Version 1.12:~
+  Some Micro$oft machines don't support the timezone ('%Z'). Made the timezone
+  optional in the default settings. The script (with default settings) should
+  now work on both Linux / Window$ machines. Thanks to Krall Ed-P27726 for
+  testing this.
+
+Version 1.11:~
+  Minor bugfix. The format of strftime("%c") is not standard amongst all
+  systems / locales. Changed the default value of "timestamp_rep" from "%c" to
+  the full expanded version. This should be more robust.
+
+Version 1.1:~
+  Does not modify any marks or the search history list. Tries to make
+  timestamping as "transparent" as possible.
+
+Version 1.0:~
+  Original fork of "timstamp.vim". See |timestamp_differences| for a list of
+  differences.
+
+------------------------------------------------------------------------------
+
+8. Differences From Timstamp:				*timestamp_differences*
 
 This script is based on "timstamp.vim" originally written by Guido Van Hoecke
 <Guido@VanHoecke.org>. There are many differences:
@@ -220,5 +246,5 @@ This script is based on "timstamp.vim" originally written by Guido Van Hoecke
 ------------------------------------------------------------------------------
 >
  Maintainer:	Gautam Iyer <gautam@math.uchicago.edu>
- Last Modified: Mon 08 Mar 2004 02:05:48 PM CST
+ Last Modified: Tue 09 Mar 2004 01:00:46 PM CST
  vim: set ft=help tw=78:

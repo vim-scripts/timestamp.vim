@@ -1,11 +1,11 @@
-" TimeStamp 1.01: Vim plugin for automated time stamping.
+" TimeStamp 1.12: Vim plugin for automated time stamping.
 " Maintainor:		Gautam Iyer <gautam@math.uchicago.edu>
 " Created:		Fri 06 Feb 2004 02:46:27 PM CST
-" Last Modified:	Sun 07 Mar 2004 02:36:19 PM CST
+" Last Modified:	Tue 09 Mar 2004 01:00:53 PM CST
 " License:		This file is placed in the public domain.
 "
-" Credits:		Thanks to Guido Van Hoecke <guido@vanhoecke.org> for
-" 			writing the original "timstamp.vim".
+" Credits:		Thanks to Guido Van Hoecke for writing the original
+"			vim script "timstamp.vim".
 " Discription:
 "   When a file is written, and the filename matches "timestamp_automask",
 "   this plugin will search the first and last "timestamp_modelines" lines of
@@ -13,19 +13,6 @@
 "   it with a timestamp. The timestamp is computed by first doing a
 "   "token_substitution" on "timestamp_rep" and passing the result to
 "   "strftime()". See the documentation for details.
-"
-" History:
-"	Version 1.11:	Minor bugfix. The format of strftime("%c") is not
-"			standard amongst all systems / locales. Changed the
-"			default value of "timestamp_rep" from "%c" to the full
-"			expanded version. This should be more robust.
-"
-"	Version 1.1:	Does not modify any marks or the search history list.
-"			Tries to make timestamping as "transparent" as
-"			possible.
-"
-"	Version 1.0:	Original fork of "timstamp.vim". Many differences. See
-"			the documentation for details.
 
 " provide load control
 if exists("loaded_timestamp")
@@ -55,7 +42,7 @@ function s:getValue(deflt, globl, ...)
 endfunction
 
 " Default timestamp expressions
-let s:timestamp_regexp = s:getValue('\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=\a{3} \d{2} \a{3} \d{4} \d{2}:\d{2}:\d{2} [AP]M \a+|TIMESTAMP', 'g:timestamp_regexp')
+let s:timestamp_regexp = s:getValue('\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=\a{3} \d{2} \a{3} \d{4} \d{2}:\d{2}:\d{2} [AP]M ?%(\a+)?|TIMESTAMP', 'g:timestamp_regexp')
 " %c seems to be different on different systems. Use a full form instead.
 let s:timestamp_rep = s:getValue('%a %d %b %Y %I:%M:%S %p %Z', 'g:timestamp_rep')
 
