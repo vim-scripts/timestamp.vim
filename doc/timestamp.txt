@@ -27,7 +27,7 @@ If the regexp |timestamp_regexp| is found in the first and last
 |timestamp_modelines| lines of your file it is replaced by a timestamp (see
 |timestamp_rep|).
 
-Default: '\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=\a+ \d{2} \a+ \d{4} \d{2}:\d{2}:\d{2} [AP]M ?%(\a+)?|TIMESTAMP'
+Default: '\v\C%(<Last %([cC]hanged?|[mM]odified)\s*:\s+)@<=\a+ \d{2} \a+ \d{4} \d{2}:\d{2}:\d{2} [AP]M ?%(\a+)?|TIMESTAMP'
 		
 To change this value, either set g:timestamp_regexp in your {.vimrc} or set
 b:timestamp_regexp for the buffer in question. NOTE: This global variable must
@@ -101,32 +101,52 @@ substitutions:
     The "#f" token is replaced by the filename of the current buffer (without
     leading path components).
 
-							*timestamp_hostname*
-    The #h token is replaced by the hostname of the current vim process. 
-   
-    The user can specify the desired value with the global variable
-    g:timestamp_hostname. If that variable does not exist, the value of the
-    $HOSTNAME environment variable will be used. If there is no $HOSTNAME, the
-    output of the hostname() function is used. However, only the last word
-    returned by that function is preserved. The platform type of qualifier
-    (e.g. PC) is not kept. NOTE: This global variable must be set before the
-    plugin is loaded.
-
 							*timestamp_Hostname*
-    The #H token is also replaced by the hostname. However, the platform
-    qualifier is not removed.
+    The #H token is replaced by the full hostname  of the current vim process.
+   
+    The default value of the hostname will be obtained from the output of the
+    command 'hostname -f'. If that fails, the value of the $HOSTNAME variable
+    will be used. If that is empty, then the value of the |hostname()|
+    function will be used.
+
+    If the default value is incorrect, or you want to use a different value,
+    simply set the global variable 'g:timestamp_Hostname', or the buffer local
+    variable 'b:timestamp_Hostname' to the desired value. NOTE: This global
+    variable must be set before the plugin is loaded, however the buffer local
+    variable can be set at any time.
+
+							*timestamp_hostname*
+    The #h is the same as the #H token, but with the domain name stripped.
+    User defined values can be specified using the variables
+    g:timestamp_hostname or b:timestamp_hostname. See the note above about
+    global / local variables.
 
 							*timestamp_username*
-    The #u token will be replaced by the user name. This will be obtained from
-    the g:timestamp_username variable if it exists. Otherwise, it is
-    initialised from the $USERNAME environment variable. NOTE: This global
-    variable must be set before the plugin is loaded.
+    The #u token will be replaced by the user name.
+    
+    The default value of the user name will be obtained from $USER or $LOGNAME
+    environment variables. If both are empty (undefined) the output of the
+    command 'id -un' will be used.
+
+    If the default value is incorrect, or you want to use a different value,
+    simply set the global variable 'g:timestamp_username', or the buffer local
+    variable 'b:timestamp_username' to the desired value. NOTE: The global
+    variable must be set before the plugin is loaded, however the buffer local
+    variable can be set at any time.
 
 							*timestamp_userid*
-    The #i token will be replaced by the userid. This will be obtained from
-    the g:timestamp_userid variable if it exists. Otherwise, it is initialised
-    from the $LOGNAME environment variable. NOTE: This global variable must be
-    set before the plugin is loaded.
+    The #i token will be replaced by the userid.
+
+    The default vaule is obtained from the "id -un" command. If that fails,
+    the default value is obtained by searching the password file for the
+    username obtained above.
+    
+    A different value can be specified by setting the global variable
+    g:timestamp_userid or the buffer local variable b:timestamp_userid to the
+    desired value. NOTE: The global variable must be set before the plugin is
+    loaded, however the buffer local variable can be set at any time. NOTE:
+    When looking up the user in the password file, the buffer local variable
+    b:timestamp_username is ignored.
 ------------------------------------------------------------------------------
     
 4. Timestamp Auto command Mask				*timestamp_automask*
@@ -139,6 +159,9 @@ defining g:timestamp_automask with the desired value, e.g.: >
 
 to limit timestamping to html files. NOTE: This global variable has to be set
 BEFORE the plugin is loaded.
+
+NOTE: If you compiled Vim without autocommands, this plugin will not work.
+
 ------------------------------------------------------------------------------
 
 5. timestamp_modelines					*timestamp_modelines*
@@ -147,7 +170,7 @@ The number of lines searched for the |timestamp_regexp| is controlled by the
 |timestamp_modelines| variable. By default this will be equal to the
 'modelines' option. To specify a different value, set the global vim variable
 'g:timestamp_modelines'. NOTE: This global variable has to be set BEFORE the
-plugin is loaded.
+plugin is loaded. HOWEVER the buffer local variable can be set at any time.
 
 If this is set to to '%' all lines in the file will be searched for the regexp
 |timestamp_regexp|. NOTE: This may be more than you want.
@@ -165,15 +188,23 @@ If this is set to to '%' all lines in the file will be searched for the regexp
 
 < 2. Match case, with filename, username and hostname in html comments: >
 
-	let g:timestamp_automask = '*.html'
-	let g:timestamp_regexp = '\v\C%(\<!-- Timestamp:\s+)@<=.{-}%(\s*--\>)@='
-	let g:timestamp_rep = '%a %d/%m/%Y %r #u@#h:#f'
+	augroup TimeStampHtml
+	    au filetype html let b:timestamp_regexp = '\v\C%(\<!-- Timestamp:\s{-1,})@<=.{-}%(\s*--\>)@='
+	    au filetype html let b:timestamp_rep = '%a %d/%m/%Y %r #u@#h:#f'
+	augroup END
 
 <    Result: >
 	<!-- Timestamp: Thu 26/02/2004 05:49:33 PM gautam@math:timestamp.txt -->
 ------------------------------------------------------------------------------
 
 7. Change History					*timestamp_history*
+
+Version 1.16:~
+  Made all g:timestamp_* variables also available as buffer local variables
+  except for g:timestamp_automask. Thanks to Lars Wilke for doing this. Also
+  fixed default values for |timestamp_hostname|, |timestamp_Hostname|,
+  |timestamp_userid| and |timestamp_username|. Thanks again to Lars Wilke for
+  testing on various platforms.
 
 Version 1.15:~
   Modified the default timestamp regexp to support timestamps in other
@@ -264,5 +295,5 @@ This script is based on "timstamp.vim" originally written by Guido Van Hoecke
 ------------------------------------------------------------------------------
 >
  Maintainer:	Gautam Iyer <gautam@math.uchicago.edu>
- Last Modified: Tue 20 Jul 2004 11:26:01 AM CDT
+ Last Modified: Fri 17 Sep 2004 05:57:36 PM CDT
  vim: set ft=help tw=78:
