@@ -1,7 +1,7 @@
-" TimeStamp 1.13: Vim plugin for automated time stamping.
+" TimeStamp 1.14: Vim plugin for automated time stamping.
 " Maintainor:		Gautam Iyer <gautam@math.uchicago.edu>
 " Created:		Fri 06 Feb 2004 02:46:27 PM CST
-" Last Modified:	Mon 29 Mar 2004 11:00:23 AM CST
+" Last Modified:	Thu 20 May 2004 01:27:05 PM CDT
 " License:		This file is placed in the public domain.
 "
 " Credits:		Thanks to Guido Van Hoecke for writing the original
@@ -19,6 +19,9 @@ if exists("loaded_timestamp")
     finish
 endif
 let loaded_timestamp = 1
+
+let s:cpo_save = &cpo
+set cpo&vim		" line continuation is used
 
 function s:getValue(deflt, globl, ...)
     " helper function to define script variables by using first any specified
@@ -105,3 +108,6 @@ function s:subst(start, end, pat, rep)
 	let lineno = lineno + 1
     endwhile
 endfunction
+
+" Restore compatibility options
+let &cpo = s:cpo_save

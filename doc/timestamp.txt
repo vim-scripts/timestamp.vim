@@ -1,4 +1,4 @@
-*timestamp.vim*  Plugin for automated time stamping
+*timestamp.vim*		Plugin for automated time stamping
 
 Description:~
 
@@ -174,6 +174,9 @@ If this is set to to '%' all lines in the file will be searched for the regexp
 
 7. Change History					*timestamp_history*
 
+Version 1.14:~
+  Now also works in compatible mode.
+
 Version 1.13:~
   Removed unwanted code for preserving cursor location. With use of setline
   and getline this is no longer necessary. A bug caused timestamp.vim to make
@@ -253,5 +256,5 @@ This script is based on "timstamp.vim" originally written by Guido Van Hoecke
 ------------------------------------------------------------------------------
 >
  Maintainer:	Gautam Iyer <gautam@math.uchicago.edu>
- Last Modified: Mon 29 Mar 2004 11:09:08 AM CST
+ Last Modified: Thu 20 May 2004 03:18:09 PM CDT
  vim: set ft=help tw=78:
