@@ -1,0 +1,212 @@
+*timestamp.vim*  Plugin for automated time stamping
+
+Description:~
+
+When a file is written, and the filename matches |timestamp_automask|, this
+plugin will search the first and last |timestamp_modelines| lines of your
+file. If it finds the regexp |timestamp_regexp| then it will replace it with a
+timestamp. The timestamp is computed by first doing a |token_substitution| on
+|timestamp_rep| and passing the result to |strftime()|. 
+
+The plugin tries to stay out of your way, and make the change as transparent
+as possible. Your search (and all other) history is unaltered, however you
+might find an extra mark in your jumplist.
+
+All the default variables and actions can be changed by buffer / global vim
+variables. See |timestamp_examples| for two simple examples.
+
+The plugin and its documentation file can be installed as described under
+|add-global-plugin| and |add-local-help|. Do not forget to run |:helptags|.
+
+------------------------------------------------------------------------------
+Options and Specifications:~
+							
+1. Timestamp Regexp format:				*timestamp_regexp*
+
+If the regexp |timestamp_regexp| is found in the first and last
+|timestamp_modelines| lines of your file it is replaced by a timestamp (see
+|timestamp_rep|).
+
+Default: '\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=\a{3} \d{2} \a{3} \d{4} \d{2}:\d{2}:\d{2} [AP]M \a{3,}|TIMESTAMP'
+		
+To change this value, either set g:timestamp_regexp in your {.vimrc} or set
+b:timestamp_regexp for the buffer in question. NOTE: This global variable must
+be set before the plugin is loaded. HOWEVER the buffer local variable can be
+set at any time.
+
+NOTE: Forward slashes are automatically escaped.
+
+The default value will EITHER match 'TIMESTAMP' or a time (in the format of
+strftime("%c")) FOLLOWED by a 'Last changed:' or 'Last modified:'. For
+instance, if you create a new file and want to stamp it with a creation date
+and a last modified date, make the first few lines: >
+
+    Created:		TIMESTAMP
+    Last Modified:	TIMESTAMP
+
+When you first write the file, these lines will change to: >
+
+    Created:		Thu 26 Feb 2004 03:15:54 PM CST
+    Last Modified:	Thu 26 Feb 2004 03:16:02 PM CST
+
+On subsequent writes of the file, the first line will remain unchanged and the
+second will be stamped with the time of writing.
+------------------------------------------------------------------------------
+
+2. Timestamp Replacement format:			*timestamp_rep*
+
+The timestamp is computed by first doing a |token_substitution| on
+|timestamp_rep| and passing the result to |strftime()|.
+
+Default: "%c" [This is the preferred date and time representation for the
+	       current locale.]
+
+To change this value, either set g:timestamp_rep in your {.vimrc} or set
+b:timestamp_rep for the buffer in question. NOTE: This global variable must be
+set before the plugin is loaded. HOWEVER the buffer local variable can be set
+at any time.
+
+NOTE: Forward slashes are automatically escaped.
+------------------------------------------------------------------------------
+
+3. Token Substitution:					*token_substitution*
+
+Before being passed to |strftime()|, |timestamp_rep| undergoes the following
+substitutions:
+
+    Token	Substitution~
+    #f		|timestamp_filename|
+    #h		|timestamp_hostname|
+    #H		|timestamp_Hostname|
+    #u		|timestamp_username|
+    #i		|timestamp_userid|
+
+							*timestamp_filename*
+    The "#f" token is replaced by the filename of the current buffer (without
+    leading path components).
+
+							*timestamp_hostname*
+    The #h token is replaced by the hostname of the current vim process. 
+   
+    The user can specify the desired value with the global variable
+    g:timestamp_hostname. If that variable does not exist, the value of the
+    $HOSTNAME environment variable will be used. If there is no $HOSTNAME, the
+    output of the hostname() function is used. However, only the last word
+    returned by that function is preserved. The platform type of qualifier
+    (e.g. PC) is not kept. NOTE: This global variable must be set before the
+    plugin is loaded.
+
+							*timestamp_Hostname*
+    The #H token is also replaced by the hostname. However, the platform
+    qualifier is not removed.
+
+							*timestamp_username*
+    The #u token will be replaced by the user name. This will be obtained from
+    the g:timestamp_username variable if it exists. Otherwise, it is
+    initialised from the $USERNAME environment variable. NOTE: This global
+    variable must be set before the plugin is loaded.
+
+							*timestamp_userid*
+    The #i token will be replaced by the userid. This will be obtained from
+    the g:timestamp_userid variable if it exists. Otherwise, it is initialised
+    from the $LOGNAME environment variable. NOTE: This global variable must be
+    set before the plugin is loaded.
+------------------------------------------------------------------------------
+    
+4. Timestamp Auto command Mask				*timestamp_automask*
+
+By default, the plugin installs an "autocommand BufWrite" for all files. So it
+uses '*' as {pat} (see |:autocmd|). The user can overrule this behaviour by
+defining g:timestamp_automask with the desired value, e.g.: >
+
+    :let g:timestamp_automask = "*.html"
+
+to limit timestamping to html files. NOTE: This global variable has to be set
+BEFORE the plugin is loaded.
+------------------------------------------------------------------------------
+
+5. timestamp_modelines					*timestamp_modelines*
+
+The number of lines searched for the |timestamp_regexp| is controlled by the
+|timestamp_modelines| variable. By default this will be equal to the
+'modelines' option. To specify a different value, set the global vim variable
+'g:timestamp_modelines'. NOTE: This global variable has to be set BEFORE the
+plugin is loaded.
+
+If this is set to to '%' all lines in the file will be searched for the regexp
+|timestamp_regexp|. NOTE: This may be more than you want.
+------------------------------------------------------------------------------
+
+6. Examples:						*timestamp_examples*
+
+  1. No case matching, short format timestamps: >
+
+	let g:timestamp_regexp = '\v\c%(last %(changed?|modified):\s+)@<=\d{4} \a{3} \d{2}'
+	let g:timestamp_rep = '%Y %b %d'
+
+<    Result: >
+	" Last change: 2004 Feb 26
+
+< 2. Match case, with filename, username and hostname in html comments: >
+
+	let g:timestamp_automask = '*.html'
+	let g:timestamp_regexp = '\v\C%(\<!-- Timestamp:\s+)@<=.{-}%(\s*--\>)@='
+	let g:timestamp_rep = '%a %d/%m/%Y %r #u@#h:#f'
+
+<    Result: >
+	<!-- Timestamp: Thu 26/02/2004 05:49:33 PM gautam@math:timestamp.txt -->
+------------------------------------------------------------------------------
+
+7. Differences From Timstamp:				*timestamp_differences*
+
+This script is based on "timstamp.vim" originally written by Guido Van Hoecke
+<Guido@VanHoecke.org>. There are many differences:
+
+  1. Note the extra E in the name (timEstamp).
+
+  2. Some bug fixes.
+
+  3. Splits the pattern and replacement into two separate variables.
+
+  4. Allows buffer local variables to replace the timestamp controls.
+
+  5. Removed support for multiple timestamps (I thought this was wasteful,
+     besides allowing buffer local variables to control timestamps makes this
+     unnecessary. Timestamps for particular filetypes can be set by buffer
+     local variables in filetype plugins)
+
+  6. timstamp_* variables are no longer present. Use |timestamp_regexp| for
+     the search pattern, and |timestamp_rep| for the replacement.
+     |timestamp_rep| is substituted for filenames and then passed to
+     |strftime()|.
+
+  7. Removed the language setting. |strftime()| should provide this in your
+     favourite language (provided your locale is set correctly)
+
+  8. By default the timestamp regexps will NOT match everything after a
+     "Last changed" or "Last modified". It will match exactly a time after
+     each of those expressions! Hence a line like >
+
+     		<i>Last changed: Tue 17 Feb 2004 04:18:40 PM CST</i>
+
+<    will get replaced with >
+
+     		<i>Last changed: Wed 18 Feb 2004 05:14:16 PM CST</i>
+
+<    Note that the final </i> is left unchanged!
+
+  9. To create a new timestamp in a file, put a line of the form
+  
+  		Last changed: TIMESTAMP (other optional stuff)
+
+     in your file. The TIMESTAMP will get replaced with a timestamp. This
+     only works with the default regexp. If you change that you're on your
+     own
+
+ 10. To check the entire file, set timestamp_modelines to '%' (instead of the
+     unintuitive '$' as before)
+------------------------------------------------------------------------------
+>
+ Maintainer:	Gautam Iyer <gautam@math.uchicago.edu>
+ Last Modified: Fri 05 Mar 2004 03:02:17 PM CST
+ vim: set ft=help tw=78:
