@@ -1,7 +1,7 @@
-" TimeStamp 1.14: Vim plugin for automated time stamping.
+" TimeStamp 1.15: Vim plugin for automated time stamping.
 " Maintainor:		Gautam Iyer <gautam@math.uchicago.edu>
 " Created:		Fri 06 Feb 2004 02:46:27 PM CST
-" Last Modified:	Thu 20 May 2004 01:27:05 PM CDT
+" Last Modified:	Thu 08 Jul 2004 09:18:13 PM IST
 " License:		This file is placed in the public domain.
 "
 " Credits:		Thanks to Guido Van Hoecke for writing the original
@@ -45,7 +45,7 @@ function s:getValue(deflt, globl, ...)
 endfunction
 
 " Default timestamp expressions
-let s:timestamp_regexp = s:getValue('\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=\a{3} \d{2} \a{3} \d{4} \d{2}:\d{2}:\d{2} [AP]M ?%(\a+)?|TIMESTAMP', 'g:timestamp_regexp')
+let s:timestamp_regexp = s:getValue('\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=\a+ \d{2} \a+ \d{4} \d{2}:\d{2}:\d{2} [AP]M ?%(\a+)?|TIMESTAMP', 'g:timestamp_regexp')
 " %c seems to be different on different systems. Use a full form instead.
 let s:timestamp_rep = s:getValue('%a %d %b %Y %I:%M:%S %p %Z', 'g:timestamp_rep')
 

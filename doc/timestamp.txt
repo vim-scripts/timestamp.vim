@@ -9,7 +9,7 @@ timestamp. The timestamp is computed by first doing a |token_substitution| on
 |timestamp_rep| and passing the result to |strftime()|. 
 
 The plugin tries to stay out of your way, and make the change as transparent
-as possible. All your history (search, command, etc) and jumplists are
+as possible. All your history (search, command, etc) and the jump list is
 unaltered, except the undo history (which contains an additional change).
 
 All the default variables and actions can be changed by buffer / global vim
@@ -27,7 +27,7 @@ If the regexp |timestamp_regexp| is found in the first and last
 |timestamp_modelines| lines of your file it is replaced by a timestamp (see
 |timestamp_rep|).
 
-Default: '\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=\a{3} \d{2} \a{3} \d{4} \d{2}:\d{2}:\d{2} [AP]M \a+|TIMESTAMP'
+Default: '\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=\a+ \d{2} \a+ \d{4} \d{2}:\d{2}:\d{2} [AP]M ?%(\a+)?|TIMESTAMP'
 		
 To change this value, either set g:timestamp_regexp in your {.vimrc} or set
 b:timestamp_regexp for the buffer in question. NOTE: This global variable must
@@ -47,15 +47,16 @@ and a last modified date, make the first few lines: >
 When you first write the file, these lines will change to: >
 
     Created:		Thu 26 Feb 2004 03:15:54 PM CST
-    Last Modified:	Thu 26 Feb 2004 03:16:02 PM CST
+    Last Modified:	Thu 26 Feb 2004 03:15:54 PM CST
 
 On subsequent writes of the file, the first line will remain unchanged and the
 second will be stamped with the time of writing.
 
 NOTE: If you find that on subsequent writes of the file, the second line is
 also unchanged, it is probably because the time returned by strftime is NOT is
-the format above. [Look closely and see if there is a leading 0 or timezone
-missing]. If you are using version 1.11 and higher and still have this
+the format above. Common reasons for this are if there is a leading 0 or
+timezone missing, or if the day / month in your language has accented
+characters. If you are using version 1.11 and higher and still have this
 problem, please report it to me. As a temporary fix, you can put the line >
 
     let timestamp_regexp = '\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=.*$'
@@ -63,7 +64,7 @@ problem, please report it to me. As a temporary fix, you can put the line >
 in your .vimrc. This however has the disadvantage of eating all the text after
 the colon in any timestamp line.
 
-NOTE: The first line (begining with "Created:") is optional.
+NOTE: The first line (beginning with "Created:") is optional.
 
 ------------------------------------------------------------------------------
 
@@ -73,7 +74,7 @@ The timestamp is computed by first doing a |token_substitution| on
 |timestamp_rep| and passing the result to |strftime()|.
 
 Default: '%a %d %b %Y %I:%M:%S %p %Z'
-    [On Linux systems this is equivalent to the prefferd date and time
+    [On Linux systems this is equivalent to the preferd date and time
     representation for the current locale.]
 
 To change this value, either set g:timestamp_rep in your {.vimrc} or set
@@ -174,6 +175,13 @@ If this is set to to '%' all lines in the file will be searched for the regexp
 
 7. Change History					*timestamp_history*
 
+Version 1.15:~
+  Modified the default timestamp regexp to support timestamps in other
+  languages by default. This only works if the day and month names in your
+  language do not use accented characters. If accented characters are present
+  you should set the default timestamp regexp in your .vimrc. English users
+  should not notice any difference.
+
 Version 1.14:~
   Now also works in compatible mode.
 
@@ -256,5 +264,5 @@ This script is based on "timstamp.vim" originally written by Guido Van Hoecke
 ------------------------------------------------------------------------------
 >
  Maintainer:	Gautam Iyer <gautam@math.uchicago.edu>
- Last Modified: Thu 20 May 2004 03:18:09 PM CDT
+ Last Modified: Tue 20 Jul 2004 11:26:01 AM CDT
  vim: set ft=help tw=78:
