@@ -1,7 +1,7 @@
-" TimeStamp 1.12: Vim plugin for automated time stamping.
+" TimeStamp 1.13: Vim plugin for automated time stamping.
 " Maintainor:		Gautam Iyer <gautam@math.uchicago.edu>
 " Created:		Fri 06 Feb 2004 02:46:27 PM CST
-" Last Modified:	Tue 09 Mar 2004 01:00:53 PM CST
+" Last Modified:	Mon 29 Mar 2004 11:00:23 AM CST
 " License:		This file is placed in the public domain.
 "
 " Credits:		Thanks to Guido Van Hoecke for writing the original
@@ -68,11 +68,6 @@ unlet s:autocomm
 
 " Function that does the timestamping
 function s:timestamp()
-    " Preserve location
-    let curcol = col('.') | let curline = line('.')
-    normal! H
-    let topcol = col('.') | let topline = line('.')
-
     " Get search and replacement patterns. Buffer local pattern overrides
     let pat = exists("b:timestamp_regexp") ? b:timestamp_regexp : s:timestamp_regexp
     let rep = exists("b:timestamp_rep") ? b:timestamp_rep : s:timestamp_rep
@@ -98,18 +93,13 @@ function s:timestamp()
     else
 	call s:subst(1, line('$'), pat, rep)
     endif
-
-    " Restore location
-    call cursor(topline, topcol)
-    normal! zt
-    call cursor(curline, curcol)
 endfunction
 
 function s:subst(start, end, pat, rep)
     let lineno = a:start
     while lineno <= a:end
 	let curline = getline(lineno)
-	if match(curline, a:pat)
+	if match(curline, a:pat) != -1
 	    call setline(lineno, substitute(curline, a:pat, a:rep, 'g'))
 	endif
 	let lineno = lineno + 1

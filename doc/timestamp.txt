@@ -174,6 +174,13 @@ If this is set to to '%' all lines in the file will be searched for the regexp
 
 7. Change History					*timestamp_history*
 
+Version 1.13:~
+  Removed unwanted code for preserving cursor location. With use of setline
+  and getline this is no longer necessary. A bug caused timestamp.vim to make
+  changes in all lines in the |timestamp_modelines| range. Corrected the code
+  so that now changes are made only when there is a timestamp in a particular
+  line. This makes undoing changes a lot easier.
+
 Version 1.12:~
   Some Micro$oft machines don't support the timezone ('%Z'). Made the timezone
   optional in the default settings. The script (with default settings) should
@@ -181,7 +188,7 @@ Version 1.12:~
   testing this.
 
 Version 1.11:~
-  Minor bugfix. The format of strftime("%c") is not standard amongst all
+  Minor bug fix. The format of strftime("%c") is not standard among all
   systems / locales. Changed the default value of "timestamp_rep" from "%c" to
   the full expanded version. This should be more robust.
 
@@ -246,5 +253,5 @@ This script is based on "timstamp.vim" originally written by Guido Van Hoecke
 ------------------------------------------------------------------------------
 >
  Maintainer:	Gautam Iyer <gautam@math.uchicago.edu>
- Last Modified: Tue 09 Mar 2004 01:00:46 PM CST
+ Last Modified: Mon 29 Mar 2004 11:09:08 AM CST
  vim: set ft=help tw=78:
