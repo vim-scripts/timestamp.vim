@@ -52,6 +52,8 @@ When you first write the file, these lines will change to: >
 On subsequent writes of the file, the first line will remain unchanged and the
 second will be stamped with the time of writing.
 
+NOTE: The first line (beginning with "Created:") is optional.
+
 NOTE: If you find that on subsequent writes of the file, the second line is
 also unchanged, it is probably because the time returned by strftime is NOT is
 the format above. Common reasons for this are if there is a leading 0 or
@@ -64,7 +66,18 @@ problem, please report it to me. As a temporary fix, you can put the line >
 in your .vimrc. This however has the disadvantage of eating all the text after
 the colon in any timestamp line.
 
-NOTE: The first line (beginning with "Created:") is optional.
+NOTE: Windows Users. If you find that the timezone is in full form instead of
+abbriviated (i.e. 'Chicago Standard Time' instead of 'CST') then look at >
+
+    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt__tzset.asp
+
+for details on how to change it (thanks to Shishir Ramam for pointing this
+out). If you preffer using the full form timezone, then add the line >
+
+    let s:timestamp_regexp = s:getValue('\v\C%(<Last %([cC]hanged?|[mM]odified)\s*:\s+)@<=\a+ \d{2} \a+ \d{4} \d{2}:\d{2}:\d{2} %[AP]M%(\a|\s)*|TIMESTAMP', 'g:timestamp_regexp')
+
+to your .vimrc. You could also just remove the '%Z' from |timestamp_rep| if
+you don't want the timezone at all.
 
 ------------------------------------------------------------------------------
 
@@ -295,5 +308,5 @@ This script is based on "timstamp.vim" originally written by Guido Van Hoecke
 ------------------------------------------------------------------------------
 >
  Maintainer:	Gautam Iyer <gautam@math.uchicago.edu>
- Last Modified: Fri 17 Sep 2004 05:57:36 PM CDT
+ Last Modified: Sat 25 Sep 2004 12:38:59 PM CDT
  vim: set ft=help tw=78:
