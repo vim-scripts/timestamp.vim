@@ -1,7 +1,7 @@
 " TimeStamp 1.01: Vim plugin for automated time stamping.
 " Maintainor:		Gautam Iyer <gautam@math.uchicago.edu>
 " Created:		Fri 06 Feb 2004 02:46:27 PM CST
-" Last Modified:	Fri 05 Mar 2004 02:58:09 PM CST
+" Last Modified:	Sun 07 Mar 2004 02:36:19 PM CST
 " License:		This file is placed in the public domain.
 "
 " Credits:		Thanks to Guido Van Hoecke <guido@vanhoecke.org> for
@@ -15,6 +15,11 @@
 "   "strftime()". See the documentation for details.
 "
 " History:
+"	Version 1.11:	Minor bugfix. The format of strftime("%c") is not
+"			standard amongst all systems / locales. Changed the
+"			default value of "timestamp_rep" from "%c" to the full
+"			expanded version. This should be more robust.
+"
 "	Version 1.1:	Does not modify any marks or the search history list.
 "			Tries to make timestamping as "transparent" as
 "			possible.
@@ -50,8 +55,9 @@ function s:getValue(deflt, globl, ...)
 endfunction
 
 " Default timestamp expressions
-let s:timestamp_regexp = s:getValue('\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=\a{3} \d{2} \a{3} \d{4} \d{2}:\d{2}:\d{2} [AP]M \a{3,}|TIMESTAMP', 'g:timestamp_regexp')
-let s:timestamp_rep = s:getValue('%c', 'g:timestamp_rep')
+let s:timestamp_regexp = s:getValue('\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=\a{3} \d{2} \a{3} \d{4} \d{2}:\d{2}:\d{2} [AP]M \a+|TIMESTAMP', 'g:timestamp_regexp')
+" %c seems to be different on different systems. Use a full form instead.
+let s:timestamp_rep = s:getValue('%a %d %b %Y %I:%M:%S %p %Z', 'g:timestamp_rep')
 
 " Plugin Initialisations.
 let s:automask   = s:getValue('*', 'g:timestamp_automask')

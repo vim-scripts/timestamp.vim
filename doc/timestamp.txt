@@ -27,7 +27,7 @@ If the regexp |timestamp_regexp| is found in the first and last
 |timestamp_modelines| lines of your file it is replaced by a timestamp (see
 |timestamp_rep|).
 
-Default: '\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=\a{3} \d{2} \a{3} \d{4} \d{2}:\d{2}:\d{2} [AP]M \a{3,}|TIMESTAMP'
+Default: '\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=\a{3} \d{2} \a{3} \d{4} \d{2}:\d{2}:\d{2} [AP]M \a+|TIMESTAMP'
 		
 To change this value, either set g:timestamp_regexp in your {.vimrc} or set
 b:timestamp_regexp for the buffer in question. NOTE: This global variable must
@@ -51,6 +51,17 @@ When you first write the file, these lines will change to: >
 
 On subsequent writes of the file, the first line will remain unchanged and the
 second will be stamped with the time of writing.
+
+NOTE: If you find that on subsequent writes of the file, the second line is
+also unchanged, it is probably because the time returned by strftime is NOT is
+the format above. [Look closely and see if there is a leading 0 or timezone
+missing]. If you are using version 1.11 and higher and still have this
+problem, please report it to me. As a temporary fix, you can put the line >
+
+    let timestamp_regexp = '\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=.*$'
+
+in your .vimrc. This however has the disadvantage of eating all the text after
+the colon in any timestamp line.
 ------------------------------------------------------------------------------
 
 2. Timestamp Replacement format:			*timestamp_rep*
@@ -58,8 +69,9 @@ second will be stamped with the time of writing.
 The timestamp is computed by first doing a |token_substitution| on
 |timestamp_rep| and passing the result to |strftime()|.
 
-Default: "%c" [This is the preferred date and time representation for the
-	       current locale.]
+Default: '%a %d %b %Y %I:%M:%S %p %Z'
+    [On Linux systems this is equivalent to the prefferd date and time
+    representation for the current locale.]
 
 To change this value, either set g:timestamp_rep in your {.vimrc} or set
 b:timestamp_rep for the buffer in question. NOTE: This global variable must be
@@ -208,5 +220,5 @@ This script is based on "timstamp.vim" originally written by Guido Van Hoecke
 ------------------------------------------------------------------------------
 >
  Maintainer:	Gautam Iyer <gautam@math.uchicago.edu>
- Last Modified: Fri 05 Mar 2004 03:02:17 PM CST
+ Last Modified: Mon 08 Mar 2004 02:05:48 PM CST
  vim: set ft=help tw=78:
