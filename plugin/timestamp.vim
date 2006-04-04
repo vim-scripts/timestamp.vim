@@ -1,7 +1,7 @@
-" TimeStamp 1.17: Vim plugin for automated time stamping.
+" TimeStamp 1.18: Vim plugin for automated time stamping.
 " Maintainor:	Gautam Iyer <gautam@math.uchicago.edu>
 " Created:	Fri 06 Feb 2004 02:46:27 PM CST
-" Modified:	Sat 13 Nov 2004 12:14:35 PM CST
+" Modified:	Thu 09 Feb 2006 11:14:42 AM CST
 " License:	This file is placed in the public domain.
 "
 " Credits:	Thanks to Guido Van Hoecke for writing the original vim script
@@ -102,7 +102,7 @@ endfunction
 " {{{1 Setup autocommand for timestamping.
 if has('autocmd')
     let s:automask = s:getValue( '*', 'g:timestamp_automask')
-    let s:autocomm = "autocmd BufWrite " . s:automask . " :call s:timestamp()"
+    let s:autocomm = "autocmd BufWritePre " . s:automask . " :call s:timestamp()"
     augroup TimeStamp
 	" this autocommand triggers the update of the requested timestamps
 	au!
@@ -164,7 +164,7 @@ function s:subst(start, end, pat, rep)
     while lineno <= a:end
 	let curline = getline(lineno)
 	if match(curline, a:pat) != -1
-	    call setline(lineno, substitute(curline, a:pat, a:rep, ''))
+	    keepjumps call setline(lineno, substitute(curline, a:pat, a:rep, ''))
 	endif
 	let lineno = lineno + 1
     endwhile

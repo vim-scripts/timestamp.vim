@@ -243,6 +243,10 @@ If this is set to to '%' all lines in the file will be searched for the regexp
 
 7. Change History					*timestamp_history*
 
+Version 1.18:~
+  Made timestamping work with zipped files (by using the |BufWritePre|
+  autocommand, instead of |BufWrite|). Also preserves your jump / changelist.
+
 Version 1.17:~
   Reduce Vim's initial load time significantly. On my system, Vim with
   timestamp-1.16 loads in about 1.1 seconds. With timestamp-1.17, it loads in
@@ -347,5 +351,5 @@ This script is based on "timstamp.vim" originally written by Guido Van Hoecke
 ------------------------------------------------------------------------------
 >
  Maintainer	: Gautam Iyer <gautam@math.uchicago.edu>
- Modified	: Sat 13 Nov 2004 12:14:41 PM CST
+ Modified	: Thu 09 Feb 2006 11:20:14 AM CST
  vim: set ft=help tw=78:
