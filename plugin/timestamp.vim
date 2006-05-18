@@ -1,7 +1,7 @@
 " TimeStamp 1.18: Vim plugin for automated time stamping.
 " Maintainor:	Gautam Iyer <gautam@math.uchicago.edu>
 " Created:	Fri 06 Feb 2004 02:46:27 PM CST
-" Modified:	Thu 09 Feb 2006 11:14:42 AM CST
+" Modified:	Thu 18 May 2006 04:39:41 PM CDT
 " License:	This file is placed in the public domain.
 "
 " Credits:	Thanks to Guido Van Hoecke for writing the original vim script
@@ -164,7 +164,11 @@ function s:subst(start, end, pat, rep)
     while lineno <= a:end
 	let curline = getline(lineno)
 	if match(curline, a:pat) != -1
-	    keepjumps call setline(lineno, substitute(curline, a:pat, a:rep, ''))
+	    let newline = substitute( curline, a:pat, a:rep, '' )
+	    if( newline != curline )
+		" Only substitute if we made a change
+		keepjumps call setline(lineno, newline)
+	    endif
 	endif
 	let lineno = lineno + 1
     endwhile
