@@ -1,7 +1,7 @@
 " TimeStamp 1.18: Vim plugin for automated time stamping.
 " Maintainor:	Gautam Iyer <gautam@math.uchicago.edu>
 " Created:	Fri 06 Feb 2004 02:46:27 PM CST
-" Modified:	Thu 18 May 2006 04:39:41 PM CDT
+" Modified:	Thu 14 Jun 2007 12:19:44 PM PDT
 " License:	This file is placed in the public domain.
 "
 " Credits:	Thanks to Guido Van Hoecke for writing the original vim script
@@ -50,7 +50,7 @@ function s:initialise()
     " timestamped. Speeds up the vim load time.
 
     " Default timestamp expressions
-    let s:timestamp_regexp = s:getValue('\v\C%(<%(Last %([cC]hanged?|modified)|Modified)\s*:\s+)@<=\a+ \d{2} \a+ \d{4} \d{2}:\d{2}:\d{2} [AP]M ?%(\a+)?|TIMESTAMP', 'g:timestamp_regexp')
+    let s:timestamp_regexp = s:getValue('\v\C%(<%(Last %([cC]hanged?|modified)|Modified)\s*:\s+)@<=\a+ \d{2} \a+ \d{4} \d{2}:\d{2}:\d{2}%(\s+[AP]M)?%(\s+\a+)?|TIMESTAMP', 'g:timestamp_regexp')
 
     " %c seems to be different on different systems. Use a full form instead.
     let s:timestamp_rep = s:getValue('%a %d %b %Y %I:%M:%S %p %Z', 'g:timestamp_rep')

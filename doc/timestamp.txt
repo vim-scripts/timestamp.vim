@@ -26,10 +26,27 @@ Options and Specifications:~
 
 If the regexp |timestamp_regexp| is found in the first and last
 |timestamp_modelines| lines of your file it is replaced by a timestamp (see
-|timestamp_rep|).
+|timestamp_rep|). The default is set to >
 
-Default: \v\C%(<%(Last %([cC]hanged?|modified)|Modified)\s*:\s+)@<=\a+ \d{2} \a+ \d{4} \d{2}:\d{2}:\d{2} [AP]M ?%(\a+)?|TIMESTAMP
-		
+    \v\C%(<%(Last %([cC]hanged?|modified)|Modified)\s*:\s+)@<=\a+ \d{2} \a+ \d{4} \d{2}:\d{2}:\d{2}%(\s+[AP]M)?%(\s+\a+)?|TIMESTAMP
+
+which will EITHER match 'TIMESTAMP' or a time (in the format of
+strftime("%c")) FOLLOWED by a 'Last changed:', 'Last modified:', 'Modified:'.
+(Spaces before and after the : don't matter). For instance, if you create a
+new file and want to stamp it with a creation date and a last modified date,
+make the first few lines: >
+
+    Created  : TIMESTAMP
+    Modified : TIMESTAMP
+
+When you first write the file, these lines will change to: >
+
+    Created  : Thu 26 Feb 2004 03:15:54 PM CST
+    Modified : Thu 26 Feb 2004 03:15:54 PM CST
+
+On subsequent writes of the file, the first line will remain unchanged and the
+second will be stamped with the time of writing.
+
 To change this value, either set g:timestamp_regexp in your {.vimrc} or set
 b:timestamp_regexp for the buffer in question. NOTE: This global variable must
 be set before the plugin is loaded. HOWEVER the buffer local variable can be
@@ -37,29 +54,13 @@ set at any time.
 
 NOTE: Forward slashes are automatically escaped.
 
-The default value will EITHER match 'TIMESTAMP' or a time (in the format of
-strftime("%c")) FOLLOWED by a 'Last changed:' or 'Last modified:'. For
-instance, if you create a new file and want to stamp it with a creation date
-and a last modified date, make the first few lines: >
-
-    Created:		TIMESTAMP
-    Last Modified:	TIMESTAMP
-
-When you first write the file, these lines will change to: >
-
-    Created:		Thu 26 Feb 2004 03:15:54 PM CST
-    Last Modified:	Thu 26 Feb 2004 03:15:54 PM CST
-
-On subsequent writes of the file, the first line will remain unchanged and the
-second will be stamped with the time of writing.
-
 NOTE: The first line (beginning with "Created:") is optional.
 
 NOTE: If you find that on subsequent writes of the file, the second line is
 also unchanged, it is probably because the time returned by strftime is NOT is
 the format above. Common reasons for this are if there is a leading 0 or
 timezone missing, or if the day / month in your language has accented
-characters. If you are using version 1.11 and higher and still have this
+characters. If you are using version 1.20 and higher and still have this
 problem, please report it to me. As a temporary fix, you can put the line >
 
     let timestamp_regexp = '\v\C%(<Last %([cC]hanged?|[Mm]odified):\s+)@<=.*$'
@@ -244,6 +245,10 @@ If this is set to to '%' all lines in the file will be searched for the regexp
 
 7. Change History					*timestamp_history*
 
+Version 1.20:~
+  Optionally ignore AM/PM in timestamp by default (some systems don't produce
+  it). Thanks to Fabian Holler for pointing this out.
+
 Version 1.19:~
   Timestamps are only written when writing the timestamp will cause a change.
   E.g. if your timestamp format is of the form 2006-05-18, then the first time
@@ -358,6 +363,6 @@ This script is based on "timstamp.vim" originally written by Guido Van Hoecke
      unintuitive '$' as before)
 ------------------------------------------------------------------------------
 >
- Maintainer	: Gautam Iyer <gautam@math.uchicago.edu>
- Modified	: Thu 18 May 2006 04:47:48 PM CDT
+ Maintainer	: Gautam Iyer <gi1242@users.sourceforge.net>
+ Modified	: Thu 21 Jun 2007 04:08:38 PM CDT
  vim: set ft=help tw=78:
