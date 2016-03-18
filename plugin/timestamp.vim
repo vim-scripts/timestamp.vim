@@ -29,15 +29,15 @@ function s:getValue(deflt, globl, ...)
     " first non-empty arguement. If none exists, return deflt.
     " If globl is "NONE" then don't look for a global variable.
     if a:globl != 'NONE' && exists(a:globl)
-	return {a:globl}
+        return {a:globl}
     else
-	let indx = 1
-	while indx <= a:0
-	    if a:{indx} != ""
-		return a:{indx}
-	    endif
-	    let indx = indx + 1
-	endwhile
+        let indx = 1
+        while indx <= a:0
+            if a:{indx} != ""
+                return a:{indx}
+            endif
+            let indx = indx + 1
+        endwhile
     endif
 
     " No non-empty arguements. Return default.
@@ -59,40 +59,40 @@ function s:initialise()
     let s:modelines	= s:getValue( &modelines, 'g:timestamp_modelines')
 
     if !exists( 'g:timestamp_UseSystemCalls' )
-	" Don't use any system calls (faster but less accurate).
-	let s:Hostname	= s:getValue( hostname(), 'g:timestamp_Hostname', $HOSTNAME, $HOST)
-	let s:username	= s:getValue( 'unknown', 'g:timestamp_username', $USER, $LOGNAME, $USERNAME)
-	let s:userid	= s:getValue( 'unknown', 'g:timestamp_userid')
+        " Don't use any system calls (faster but less accurate).
+        let s:Hostname	= s:getValue( hostname(), 'g:timestamp_Hostname', $HOSTNAME, $HOST)
+        let s:username	= s:getValue( 'unknown', 'g:timestamp_username', $USER, $LOGNAME, $USERNAME)
+        let s:userid	= s:getValue( 'unknown', 'g:timestamp_userid')
     else
-	" Get Hostname
-	if exists('g:timestamp_Hostname')
-	    let s:Hostname = g:timestamp_Hostname
-	else
-	    let s:Hostname = system('hostname -f | tr -d "\n"')
-	    let s:Hostname = s:getValue( hostname(), 'NONE', v:shell_error ? '' : s:Hostname, $HOSTNAME, $HOST)
-	endif
+        " Get Hostname
+        if exists('g:timestamp_Hostname')
+            let s:Hostname = g:timestamp_Hostname
+        else
+            let s:Hostname = system('hostname -f | tr -d "\n"')
+            let s:Hostname = s:getValue( hostname(), 'NONE', v:shell_error ? '' : s:Hostname, $HOSTNAME, $HOST)
+        endif
 
-	" Get username
-	if exists('g:timestamp_username')
-	    let s:username = g:timestamp_username
-	else
-	    let s:username = system( 'id -un | tr -d "\n"')
-	    let s:username = s:getValue( v:shell_error ? 'unknown' : s:username,
-			\ 'NONE', $USER, $LOGNAME, $USERNAME)
-	endif
+        " Get username
+        if exists('g:timestamp_username')
+            let s:username = g:timestamp_username
+        else
+            let s:username = system( 'id -un | tr -d "\n"')
+            let s:username = s:getValue( v:shell_error ? 'unknown' : s:username,
+                        \ 'NONE', $USER, $LOGNAME, $USERNAME)
+        endif
 
-	" Get userid
-	if exists('g:timestamp_userid')
-	    let s:userid = g:timestamp_userid
-	else
-	    let s:userid = system( 'id -u | tr -d "\n"')
-	    if v:shell_error && s:username != 'unknown'
-		let s:userid = system( 'grep ' . s:username . ' /etc/passwd | cut -f 3 -d : | tr -d "\n"')
-		if v:shell_error
-		    let s:userid = 'unknown'
-		endif
-	    endif
-	endif
+        " Get userid
+        if exists('g:timestamp_userid')
+            let s:userid = g:timestamp_userid
+        else
+            let s:userid = system( 'id -u | tr -d "\n"')
+            if v:shell_error && s:username != 'unknown'
+                let s:userid = system( 'grep ' . s:username . ' /etc/passwd | cut -f 3 -d : | tr -d "\n"')
+                if v:shell_error
+                    let s:userid = 'unknown'
+                endif
+            endif
+        endif
     endif
 
     " Get hostname
@@ -102,35 +102,35 @@ endfunction
 " {{{1 setup_autocommand(): Function to setup autocommands for timestamping.
 function s:setup_autocommand()
     if has('autocmd')
-	if ! exists( 's:autocomm' )
-	    let l:automask = s:getValue( '*', 'g:timestamp_automask')
-	    let s:autocomm = "autocmd BufWritePre " . l:automask
-			\ . " :call s:timestamp()"
-	endif
+        if ! exists( 's:autocomm' )
+            let l:automask = s:getValue( '*', 'g:timestamp_automask')
+            let s:autocomm = "autocmd BufWritePre " . l:automask
+                        \ . " :call s:timestamp()"
+        endif
 
-	augroup TimeStamp
-	    " this autocommand triggers the update of the requested timestamps
-	    au!
-	    exec s:autocomm
-	augroup END
+        augroup TimeStamp
+            " this autocommand triggers the update of the requested timestamps
+            au!
+            exec s:autocomm
+        augroup END
     else
-	echoerr 'Autocommands not enabled. Timestamping will not work'
+        echoerr 'Autocommands not enabled. Timestamping will not work'
     endif
 endfunction
 
 " {{{1 timestamp(): Function that does the timestamping
 function s:timestamp()
     if exists('b:timestamp_disabled') && b:timestamp_disabled
-	return
+        return
     endif
 
     " If running for the first time, initialise script variables.
     if !exists('s:timestamp_regexp')
-	call s:initialise()
+        call s:initialise()
 
-	" Free up memory.
-	delfunction s:initialise
-	delfunction s:getValue
+        " Free up memory.
+        delfunction s:initialise
+        delfunction s:getValue
     endif
 
     " Get buffer local patterns -- overriding global ones.
@@ -158,27 +158,39 @@ function s:timestamp()
     let l:modelines = (l:modelines == '%') ? line('$') : l:modelines
 
     if line('$') > 2 * l:modelines
-	call s:subst(1, l:modelines, pat, rep)
-	call s:subst(line('$') + 1 - l:modelines, line('$'), pat, rep)
+        call s:subst(1, l:modelines, pat, rep)
+        call s:subst(line('$') + 1 - l:modelines, line('$'), pat, rep)
     else
-	call s:subst(1, line('$'), pat, rep)
+        call s:subst(1, line('$'), pat, rep)
     endif
+
+    if line('$') >= 4
+        if match(getline(4), '^ \*\s\{1,\}Filename: .*$') != -1
+            call setline(4, ' *       Filename: '.expand('%:t'))
+        endif
+    endif
+
 endfunction
 
 " {{{1 subst( start, end, pat, rep): substitute on range start - end.
 function s:subst(start, end, pat, rep)
+    " make sure this buffer is really in need of timestamp update
+    if &modified == 0
+        return
+    endif
+
     let lineno = a:start
     while lineno <= a:end
-	let curline = getline(lineno)
-	if match(curline, a:pat) != -1
-	    let newline = substitute( curline, a:pat, a:rep, '' )
-	    if( newline != curline )
-		" Only substitute if we made a change
-		"silent! undojoin
-		keepjumps call setline(lineno, newline)
-	    endif
-	endif
-	let lineno = lineno + 1
+        let curline = getline(lineno)
+        if match(curline, a:pat) != -1
+            let newline = substitute( curline, a:pat, a:rep, '' )
+            if( newline != curline )
+                " Only substitute if we made a change
+                "silent! undojoin
+                keepjumps call setline(lineno, newline)
+            endif
+        endif
+        let lineno = lineno + 1
     endwhile
 endfunction
 " }}}1
